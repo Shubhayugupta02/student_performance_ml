@@ -8,7 +8,7 @@ __pycache__/
 uploads/
 uploads.zip
 models/
-*.db
+#*.db
 *.sqlite
 *.sqlite3
 
