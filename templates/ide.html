@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Online IDE – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Online IDE</h1>
+        <span class="cyber-badge">Python (local demo)</span>
+    </div>
+    <div class="cyber-card-body">
+        <p>
+            Run small Python snippets on the server to test algorithms
+            or data processing steps. Execution is limited to 5 seconds.
+        </p>
+
+        <div class="cyber-field mt-2">
+            <label class="cyber-label">Python code</label>
+            <textarea id="code" rows="8" class="cyber-textarea"
+                      placeholder="print('Hello from CyberML IDE')"></textarea>
+        </div>
+        <button class="cyber-btn mt-2" id="run-btn">Run code</button>
+
+        <div class="mt-3">
+            <div class="cyber-field">
+                <label class="cyber-label">Stdout</label>
+                <pre id="stdout" style="min-height: 70px; font-size: 12px;"></pre>
+            </div>
+            <div class="cyber-field">
+                <label class="cyber-label">Stderr</label>
+                <pre id="stderr" style="min-height: 40px; font-size: 12px; color: #ffced6;"></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('run-btn').addEventListener('click', async () => {
+    const code = document.getElementById('code').value;
+    const stdout = document.getElementById('stdout');
+    const stderr = document.getElementById('stderr');
+    stdout.textContent = '';
+    stderr.textContent = '';
+    try {
+        const res = await fetch('{{ url_for("api_run_python") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({code})
+        });
+        const data = await res.json();
+        stdout.textContent = data.stdout || '';
+        stderr.textContent = data.stderr || '';
+    } catch (err) {
+        stderr.textContent = 'Request failed.';
+    }
+});
+</script>
+{% endblock %}
+
+
+
+
+
+

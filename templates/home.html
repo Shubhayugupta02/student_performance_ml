@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}CyberML – Home{% endblock %}
+
+{% block content %}
+<div class="cyber-grid grid-2">
+    <section class="cyber-card">
+        <div class="cyber-card-header">
+            <h1 class="cyber-card-title">Student Performance Analytics</h1>
+            <span class="cyber-badge">ML-Powered</span>
+        </div>
+        <div class="cyber-card-body">
+            <p>
+                Analyse student data with machine learning, monitor academic risk
+                and visualise class progress in a cyber-neon dashboard.
+            </p>
+            <p class="mt-2">
+                • Teachers can upload datasets, create assignments, grade submissions
+                and track leaderboards.<br>
+                • Students can estimate their final marks, see improvement tips and
+                check their assignment status.
+            </p>
+            <div class="mt-3">
+                <a href="{{ url_for('predict_page') }}" class="cyber-btn">Try Prediction</a>
+                {% if session.get('role') == 'teacher' %}
+                    <a href="{{ url_for('upload_page') }}" class="cyber-btn cyber-btn-ghost">
+                        Upload Dataset
+                    </a>
+                {% elif session.get('role') == 'student' %}
+                    <a href="{{ url_for('student_dashboard') }}" class="cyber-btn cyber-btn-ghost">
+                        Open My Dashboard
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="cyber-btn cyber-btn-ghost">
+                        Login to unlock features
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="cyber-card">
+        <div class="cyber-card-header">
+            <h2 class="cyber-card-title">System Status</h2>
+        </div>
+        <div class="cyber-card-body">
+            {% if upcoming %}
+                <div class="cyber-alert cyber-alert-success">
+                    <strong>Upcoming assignment:</strong> {{ upcoming.title }}<br>
+                    Due: {{ upcoming.due_date }} ({{ upcoming.days_left }} days left)
+                </div>
+            {% else %}
+                <div class="cyber-alert cyber-alert-success">
+                    No urgent assignments in the next 3 days.
+                </div>
+            {% endif %}
+
+            <p class="mt-2">
+                Use the <strong>Prediction</strong> tab to simulate scores using
+                previous percentage, internals, assignments, study hours and attendance.
+            </p>
+            <p>
+                Once a dataset is uploaded from <strong>Upload</strong>, the
+                <strong>Performance</strong> page will show ML charts and
+                feature importance using Chart.js.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+

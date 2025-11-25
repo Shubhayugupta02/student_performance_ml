@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}CyberML Portal{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Chart.js for performance page -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="cyber-shell">
+    <header class="cyber-nav">
+        <div class="cyber-nav-inner">
+            <div class="cyber-brand">
+                <div class="cyber-logo"></div>
+                <div class="cyber-title">
+                    CYBER<span>ML</span>
+                </div>
+            </div>
+            <nav class="cyber-nav-links">
+                <a href="{{ url_for('home') }}"
+                   class="cyber-link {% if request.endpoint == 'home' %}cyber-link-active{% endif %}">
+                    Home
+                </a>
+                <a href="{{ url_for('predict_page') }}"
+                   class="cyber-link {% if request.endpoint == 'predict_page' %}cyber-link-active{% endif %}">
+                    Prediction
+                </a>
+                {% if session.get('role') == 'teacher' %}
+                    <a href="{{ url_for('upload_page') }}"
+                       class="cyber-link {% if request.endpoint == 'upload_page' %}cyber-link-active{% endif %}">
+                        Upload
+                    </a>
+                    <a href="{{ url_for('performance_page') }}"
+                       class="cyber-link {% if request.endpoint == 'performance_page' %}cyber-link-active{% endif %}">
+                        Performance
+                    </a>
+                    <a href="{{ url_for('teacher_assignments') }}"
+                       class="cyber-link {% if request.endpoint == 'teacher_assignments' %}cyber-link-active{% endif %}">
+                        Assignments
+                    </a>
+                    <a href="{{ url_for('leaderboard_page') }}"
+                       class="cyber-link {% if request.endpoint == 'leaderboard_page' %}cyber-link-active{% endif %}">
+                        Leaderboard
+                    </a>
+                {% elif session.get('role') == 'student' %}
+                    <a href="{{ url_for('student_dashboard') }}"
+                       class="cyber-link {% if request.endpoint == 'student_dashboard' %}cyber-link-active{% endif %}">
+                        My Dashboard
+                    </a>
+                    <a href="{{ url_for('student_assignments') }}"
+                       class="cyber-link {% if request.endpoint == 'student_assignments' %}cyber-link-active{% endif %}">
+                        Assignments
+                    </a>
+                {% endif %}
+                <a href="{{ url_for('ide_page') }}"
+                   class="cyber-link {% if request.endpoint == 'ide_page' %}cyber-link-active{% endif %}">
+                    IDE
+                </a>
+                <a href="{{ url_for('about_page') }}"
+                   class="cyber-link {% if request.endpoint == 'about_page' %}cyber-link-active{% endif %}">
+                    About
+                </a>
+                {% if session.get('username') %}
+                    <span class="cyber-pill">
+                        {{ session['username'] }} ({{ session['role'] }})
+                        &nbsp;•&nbsp;
+                        <a href="{{ url_for('logout') }}" style="color: #ffd9ff; text-decoration:none;">Logout</a>
+                    </span>
+                {% else %}
+                    <a class="cyber-pill" href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="cyber-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="cyber-footer">
+        © 2025 CyberML – Student AI Performance System
+    </footer>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+

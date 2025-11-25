@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}CYBERML – Predict Performance{% endblock %}
+
+{% block content %}
+<div class="page-section neon-card">
+  <h1 class="page-title">🎯 Performance Prediction</h1>
+  <p class="page-subtitle">
+    Enter your current study pattern. The model (or smart rules) will estimate your expected marks and grade.
+  </p>
+
+  {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  {% if submitted %}
+    <div class="prediction-result neon-glow">
+      <h2>Predicted Result</h2>
+      <div class="result-grid">
+        <div class="result-card">
+          <span class="label">Expected {{ target_name or "Final Marks" }}</span>
+          <span class="value large">{{ prediction }}%</span>
+        </div>
+        <div class="result-card">
+          <span class="label">Predicted Grade</span>
+          <span class="value grade">{{ grade }}</span>
+        </div>
+        {% if model_name and model_score is not none %}
+        <div class="result-card">
+          <span class="label">Best Model</span>
+          <span class="value">{{ model_name }}</span>
+          <span class="meta">Accuracy: {{ model_score }}%</span>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if tips %}
+      <div class="tips-box">
+        <h3>📈 Suggestions to Improve</h3>
+        <p>{{ tips }}</p>
+      </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <form class="glass-form" method="POST" action="{{ url_for('predict_page') }}">
+    <h2 class="section-heading">Enter Your Current Status</h2>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="prev_percent">Previous Semester Percentage (%)</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          max="100"
+          id="prev_percent"
+          name="prev_percent"
+          value="{{ form_values.prev_percent if submitted and form_values is defined else '' }}"
+          placeholder="e.g., 75"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="internal_marks">Internal Marks (%)</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          max="100"
+          id="internal_marks"
+          name="internal_marks"
+          value="{{ form_values.internal_marks if submitted and form_values is defined else '' }}"
+          placeholder="e.g., 80"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="attendance">Attendance (%)</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          max="100"
+          id="attendance"
+          name="attendance"
+          value="{{ form_values.attendance if submitted and form_values is defined else '' }}"
+          placeholder="e.g., 85"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="assignments">Assignments Completed (%)</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          max="100"
+          id="assignments"
+          name="assignments"
+          value="{{ form_values.assignments if submitted and form_values is defined else '' }}"
+          placeholder="e.g., 90"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="study_hours">Average Study Hours / Day</label>
+        <input
+          type="number"
+          step="0.1"
+          min="0"
+          id="study_hours"
+          name="study_hours"
+          value="{{ form_values.study_hours if submitted and form_values is defined else '' }}"
+          placeholder="e.g., 2.5"
+          required
+        >
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary neon-button">
+        🔮 Predict My Performance
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+

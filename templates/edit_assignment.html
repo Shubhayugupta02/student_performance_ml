@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Edit Assignment – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card" style="max-width: 520px; margin:0 auto;">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Edit Assignment #{{ assignment.id }}</h1>
+    </div>
+    <div class="cyber-card-body">
+        <form method="post" class="cyber-form">
+            <div class="cyber-field">
+                <label class="cyber-label">Title</label>
+                <input class="cyber-input" name="title" value="{{ assignment.title }}" required>
+            </div>
+            <div class="cyber-field">
+                <label class="cyber-label">Description</label>
+                <textarea class="cyber-textarea" name="description" rows="3">{{ assignment.description }}</textarea>
+            </div>
+            <div class="cyber-field">
+                <label class="cyber-label">Due date</label>
+                <input class="cyber-input" name="due_date" type="date" value="{{ assignment.due_date }}">
+            </div>
+            <button class="cyber-btn mt-2" type="submit">Save changes</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+
+

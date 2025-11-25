@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Plagiarism Report – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Plagiarism – #{{ assign_id }} {{ assignment.title }}</h1>
+    </div>
+    <div class="cyber-card-body">
+        {% if pairs %}
+            <p>The following pairs of submissions have high similarity (≥ 80%):</p>
+            <table class="cyber-table mt-2">
+                <thead>
+                <tr>
+                    <th>File 1</th>
+                    <th>File 2</th>
+                    <th>Similarity %</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in pairs %}
+                    <tr>
+                        <td>{{ p.file1 }}</td>
+                        <td>{{ p.file2 }}</td>
+                        <td>{{ p.similarity }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="cyber-alert cyber-alert-success">
+                No suspiciously similar submissions detected for this assignment.
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+
+
+

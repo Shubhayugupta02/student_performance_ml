@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Teacher Dashboard – CyberML{% endblock %}
+
+{% block content %}
+<section class="section-header">
+    <h1>Teacher Dashboard</h1>
+    <p class="muted">Welcome, Teacher (demo). Use the menu to navigate.</p>
+</section>
+
+<section class="card-grid">
+    <div class="card">
+        <h2>Quick Links</h2>
+        <ul class="bullet-list">
+            <li><a href="{{ url_for('upload_page') }}">Upload a new dataset</a></li>
+            <li><a href="{{ url_for('performance_page') }}">View performance dashboard</a></li>
+            <li><a href="{{ url_for('leaderboard_page') }}">View leaderboard</a></li>
+        </ul>
+    </div>
+</section>
+{% endblock %}
+

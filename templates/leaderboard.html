@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Leaderboard</h1>
+        <span class="cyber-badge">Teacher view</span>
+    </div>
+    <div class="cyber-card-body">
+        {% if leaderboard %}
+            <p>Only students graded by you are shown here.</p>
+            <table class="cyber-table mt-2">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Student</th>
+                    <th>Avg %</th>
+                    <th>Submissions</th>
+                    <th>Badge</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in leaderboard %}
+                    <tr>
+                        <td>{{ row.rank }}</td>
+                        <td>{{ row.username }}</td>
+                        <td>{{ row.avg_percent }}</td>
+                        <td>{{ row.submissions }}</td>
+                        <td>{{ row.badge }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="cyber-alert cyber-alert-success">
+                No graded submissions yet – leaderboard will appear after you grade
+                at least one assignment.
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+
+
+

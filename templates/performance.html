@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %}CYBERML – Performance Analytics{% endblock %}
+
+{% block content %}
+<div class="page-section neon-card">
+  <h1 class="page-title">📊 Performance Analytics</h1>
+  <p class="page-subtitle">
+    Visualize your uploaded dataset: grade distribution, feature importance,
+    regression pattern and correlation heatmap.
+  </p>
+
+  {% if no_dataset %}
+    <div class="alert alert-error">
+      No dataset uploaded yet. Go to <strong>Upload Dataset</strong> and train a model first.
+    </div>
+  {% endif %}
+
+  {% if scores %}
+  <div class="model-summary">
+    <h2>Model Summary</h2>
+    <div class="model-grid">
+      <div class="model-card">
+        <span class="label">Best Model</span>
+        <span class="value">{{ best_model or "Not trained" }}</span>
+      </div>
+      <div class="model-card large">
+        <h3>All Model Scores (R²)</h3>
+        <ul>
+          {% for name, score in scores.items() %}
+          <li><strong>{{ name }}</strong>: {{ '%.3f'|format(score) }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if not no_dataset %}
+  <div class="charts-section">
+    <h2 class="section-heading">Interactive Charts (Dynamic)</h2>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Grade Distribution – Pie</h3>
+        <canvas id="gradePie"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Grade Distribution – Bar</h3>
+        <canvas id="gradeBar"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Feature Importance (Random Forest)</h3>
+        <canvas id="featureBar"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3>Regression Scatter</h3>
+        <canvas id="regressionScatter"></canvas>
+      </div>
+    </div>
+
+    <h2 class="section-heading">Server-generated Heatmap & Regression</h2>
+    <div class="static-charts">
+      <div class="static-card">
+        <h3>Correlation Heatmap</h3>
+        <img src="{{ url_for('static', filename='charts/heatmap.png') }}"
+             alt="Correlation Heatmap"
+             class="static-img">
+      </div>
+      <div class="static-card">
+        <h3>Regression (Main Feature vs Target)</h3>
+        <img src="{{ url_for('static', filename='charts/regression.png') }}"
+             alt="Regression Plot"
+             class="static-img">
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if not no_dataset %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Only fetch if the canvases exist (teacher + dataset case)
+  const gradePieCanvas = document.getElementById("gradePie");
+  if (!gradePieCanvas) return;
+
+  fetch("{{ url_for('performance_data') }}")
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        console.error("Performance API error:", data.error);
+        return;
+      }
+
+      // -------------------------------
+      // 1. Grade distribution (pie + bar)
+      // -------------------------------
+      const gradeLabels = ["A", "B", "C", "D", "F"];
+      const gradeCounts = gradeLabels.map(g => data.grades[g] || 0);
+
+      // Pie chart
+      const gradePieCtx = document.getElementById("gradePie").getContext("2d");
+      new Chart(gradePieCtx, {
+        type: "pie",
+        data: {
+          labels: gradeLabels,
+          datasets: [{
+            data: gradeCounts,
+            backgroundColor: [
+              "#ff6ac1", // neon pink
+              "#00f0ff",
+              "#8b5cf6",
+              "#22c55e",
+              "#f97316"
+            ],
+            borderColor: "#020617",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { labels: { color: "#e5e7eb" } },
+            title: {
+              display: false
+            }
+          }
+        }
+      });
+
+      // Bar chart
+      const gradeBarCtx = document.getElementById("gradeBar").getContext("2d");
+      new Chart(gradeBarCtx, {
+        type: "bar",
+        data: {
+          labels: gradeLabels,
+          datasets: [{
+            label: "Count of students",
+            data: gradeCounts,
+            backgroundColor: "#ff6ac1",
+            borderColor: "#f9a8d4",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              ticks: { color: "#e5e7eb" },
+              grid: { color: "rgba(148,163,184,0.2)" }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: "#e5e7eb" },
+              grid: { color: "rgba(148,163,184,0.2)" }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: "#e5e7eb" } }
+          }
+        }
+      });
+
+      // -------------------------------
+      // 2. Feature importance (bar)
+      // -------------------------------
+      const importance = data.importance || {};
+      const featNames = Object.keys(importance);
+      const featValues = featNames.map(k => importance[k]);
+
+      if (featNames.length > 0) {
+        const featCtx = document.getElementById("featureBar").getContext("2d");
+        new Chart(featCtx, {
+          type: "bar",
+          data: {
+            labels: featNames,
+            datasets: [{
+              label: "Importance",
+              data: featValues,
+              backgroundColor: "#22c55e",
+              borderColor: "#bbf7d0",
+              borderWidth: 2
+            }]
+          },
+          options: {
+            indexAxis: "y",
+            scales: {
+              x: {
+                beginAtZero: true,
+                ticks: { color: "#e5e7eb" },
+                grid: { color: "rgba(148,163,184,0.2)" }
+              },
+              y: {
+                ticks: { color: "#e5e7eb" },
+                grid: { color: "rgba(15,23,42,0.6)" }
+              }
+            },
+            plugins: {
+              legend: { labels: { color: "#e5e7eb" } }
+            }
+          }
+        });
+      }
+
+      // -------------------------------
+      // 3. Regression scatter
+      // -------------------------------
+      const scatterFeature = data.scatter_feature;
+      const pts = data.scatter_points || [];
+
+      if (scatterFeature && pts.length > 0) {
+        const scatterCtx = document.getElementById("regressionScatter").getContext("2d");
+        new Chart(scatterCtx, {
+          type: "scatter",
+          data: {
+            datasets: [{
+              label: scatterFeature + " vs " + data.target,
+              data: pts,
+              backgroundColor: "#00f0ff",
+              pointRadius: 4
+            }]
+          },
+          options: {
+            scales: {
+              x: {
+                type: "linear",
+                position: "bottom",
+                title: { display: true, text: scatterFeature, color: "#e5e7eb" },
+                ticks: { color: "#e5e7eb" },
+                grid: { color: "rgba(148,163,184,0.2)" }
+              },
+              y: {
+                title: { display: true, text: data.target, color: "#e5e7eb" },
+                ticks: { color: "#e5e7eb" },
+                grid: { color: "rgba(148,163,184,0.2)" }
+              }
+            },
+            plugins: {
+              legend: { labels: { color: "#e5e7eb" } }
+            }
+          }
+        });
+      }
+    })
+    .catch(err => {
+      console.error("Failed to load performance data:", err);
+    });
+});
+</script>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

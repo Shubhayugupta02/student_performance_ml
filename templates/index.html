@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Performance Prediction System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="logo">StuPredict<span>AI</span></div>
+    <nav>
+      <a href="#predictor">Predict</a>
+      <a href="#upload">Upload</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>AI-based Student Performance Prediction</h1>
+      <p>
+        Enter academic details and let our Python + ML models (Decision Tree & Linear Regression)
+        estimate final performance and suggest how to improve weak areas.
+      </p>
+      <a href="#predictor" class="primary-btn">Start Prediction</a>
+    </div>
+  </section>
+
+  <!-- Predictor Section -->
+  <section id="predictor" class="card-section">
+    <div class="card">
+      <h2>Student Performance Predictor</h2>
+      <p class="subtitle">Fill the form below to get prediction and personalized recommendations.</p>
+      <form id="predictionForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Student Name</label>
+            <input type="text" id="name" required />
+          </div>
+          <div class="form-group">
+            <label for="roll">Roll No.</label>
+            <input type="text" id="roll" required />
+          </div>
+          <div class="form-group">
+            <label for="prevPercent">Previous Semester %</label>
+            <input type="number" id="prevPercent" min="0" max="100" required />
+          </div>
+          <div class="form-group">
+            <label for="internalMarks">Average Internal Marks (out of 100)</label>
+            <input type="number" id="internalMarks" min="0" max="100" required />
+          </div>
+          <div class="form-group">
+            <label for="attendance">Attendance %</label>
+            <input type="number" id="attendance" min="0" max="100" required />
+          </div>
+          <div class="form-group">
+            <label for="studyHours">Study Hours per Day</label>
+            <input type="number" id="studyHours" min="0" max="16" step="0.5" required />
+          </div>
+          <div class="form-group">
+            <label for="assignments">Assignments Completed %</label>
+            <input type="number" id="assignments" min="0" max="100" required />
+          </div>
+
+          <!-- Model selection -->
+          <div class="form-group">
+            <label for="modelType">Select ML Model</label>
+            <select id="modelType">
+              <option value="tree">Decision Tree Regressor</option>
+              <option value="linear">Linear Regression</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="primary-btn full-width">Predict Performance</button>
+      </form>
+
+      <div id="resultCard" class="result-card hidden">
+        <h3>Prediction Result</h3>
+        <p><strong>Predicted Final %:</strong> <span id="predictedPercent"></span></p>
+        <p><strong>Category:</strong> <span id="category"></span></p>
+        <p><strong>Summary:</strong> <span id="summary"></span></p>
+
+        <p><strong>Model Used:</strong> <span id="modelName"></span></p>
+        <p><strong>Model R² Score:</strong> <span id="modelR2"></span></p>
+
+        <h4>Weak Student Recommendation</h4>
+        <p id="recommendationText"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upload Section -->
+  <section id="upload" class="card-section">
+    <div class="card">
+      <h2>Upload Class Data (PDF / Excel)</h2>
+      <p class="subtitle">
+        You can upload attendance sheets, marksheets, or performance reports.  
+        Files are stored on the server in an <code>uploads/</code> folder.
+      </p>
+      <form id="uploadForm">
+        <div class="form-group">
+          <label for="fileInput">Choose File (.pdf, .xls, .xlsx)</label>
+          <input type="file" id="fileInput" accept=".pdf,.xls,.xlsx" required />
+        </div>
+        <button type="submit" class="secondary-btn full-width">Upload</button>
+      </form>
+      <p id="uploadStatus" class="status-text"></p>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="card-section">
+    <div class="card">
+      <h2>About This Project</h2>
+      <p>
+        This project uses a <strong>Python (Flask)</strong> backend with
+        <strong>NumPy, pandas, matplotlib, and scikit-learn</strong> to train ML models
+        for predicting student performance.
+      </p>
+      <p>
+        Current models trained on the sample dataset:
+      </p>
+      <ul>
+        <li>Decision Tree Regressor (R² ≈ {{ "%.2f"|format(r2_tree) }})</li>
+        <li>Linear Regression (R² ≈ {{ "%.2f"|format(r2_linear) }})</li>
+      </ul>
+      <p>
+        Below is a matplotlib-generated plot (Attendance vs Final %), created on the server and served as a static image:
+      </p>
+      <img src="/static/attendance_plot.png" alt="Attendance vs Final Percentage"
+           style="max-width:100%; border-radius:16px; margin-top:10px;" />
+    </div>
+  </section>
+
+  <!-- Chatbot Widget -->
+  <div id="chatbotWidget" class="chatbot-widget hidden">
+    <div class="chatbot-header">
+      <span>StuBot AI</span>
+      <button id="closeChatbot" class="close-btn">&times;</button>
+    </div>
+    <div id="chatbotMessages" class="chatbot-messages"></div>
+    <form id="chatbotForm" class="chatbot-input-area">
+      <input type="text" id="chatbotInput" placeholder="Ask: how to improve my marks?" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Small circular toggle button -->
+  <button id="chatbotToggle" class="chatbot-toggle">
+    💬
+  </button>
+
+  <!-- JS -->
+  <script src="/static/chatbot.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
+

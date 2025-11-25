@@ -1,0 +1,22 @@
+# Python env / caches
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Data / uploads / models
+uploads/
+uploads.zip
+models/
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / editor
+.DS_Store
+.vscode/
+
+# Temp
+tmp/
+temp/
+

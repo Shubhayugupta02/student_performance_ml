@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}About – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">About CyberML</h1>
+        <span class="cyber-badge">B.Tech Project</span>
+    </div>
+    <div class="cyber-card-body">
+        <p>
+            CyberML is a student performance analytics portal built with Flask,
+            SQLite and scikit-learn.
+        </p>
+        <p>
+            Teachers can upload student result datasets, train machine learning
+            models, create assignments and grade submissions. The system computes
+            grade distributions, feature importances and risk alerts.
+        </p>
+        <p>
+            Students can experiment with a prediction form that uses attendance,
+            study hours, assignment completion and internals to estimate
+            expected final marks and grade, with personalised tips.
+        </p>
+        <p class="mt-2">
+            The cyber-neon UI is designed to feel like a futuristic control panel
+            while remaining simple enough for classroom use.
+        </p>
+    </div>
+</section>
+{% endblock %}
+
+
+
+
+

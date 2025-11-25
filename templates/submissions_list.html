@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Submissions – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Submissions for #{{ assign_id }} – {{ assignment.title }}</h1>
+        <span class="cyber-badge">Teacher</span>
+    </div>
+    <div class="cyber-card-body">
+        <p>
+            <a class="cyber-btn cyber-btn-ghost"
+               href="{{ url_for('download_all_submissions', assign_id=assign_id) }}">
+                Download all as ZIP
+            </a>
+        </p>
+
+        {% if avg_percent %}
+            <p>Average marks: {{ avg_marks }} ({{ avg_percent }}%)</p>
+        {% endif %}
+
+        <table class="cyber-table mt-2">
+            <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Submitted at</th>
+                <th>Late?</th>
+                <th>Marks</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for s in submissions %}
+                <tr>
+                    <td>{{ s.filename }}</td>
+                    <td>{{ s.submitted_at }}</td>
+                    <td>{{ 'Yes' if s.is_late else 'No' }}</td>
+                    <td>
+                        {% if s.grade %}
+                            {{ s.grade.marks }}/{{ s.grade.out_of }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="cyber-link"
+                           href="{{ url_for('download_submission', filename=s.filename) }}">Download</a>
+                        <a class="cyber-link"
+                           href="{{ url_for('grade_submission', filename=s.filename) }}">Grade</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+
+
+
+

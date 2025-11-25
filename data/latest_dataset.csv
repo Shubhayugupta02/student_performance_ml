@@ -1,0 +1,11 @@
+name,roll,prev_percent,internal_marks,attendance,study_hours,assignments,final_percent
+Amit,101,65,70,80,2.5,90,72
+Priya,102,75,78,85,3.0,95,80
+Rohit,103,55,60,60,1.5,70,58
+Sneha,104,82,88,92,3.5,100,88
+Karan,105,45,50,55,1.0,60,48
+Riya,106,60,65,75,2.0,80,66
+Vivek,107,72,74,78,2.5,85,76
+Anjali,108,50,55,65,1.5,65,56
+Suman,109,88,90,95,4.0,100,92
+Neha,110,40,45,50,1.0,50,44

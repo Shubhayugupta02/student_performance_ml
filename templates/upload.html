@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Upload Dataset – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Upload Dataset</h1>
+        <span class="cyber-badge">Teachers only</span>
+    </div>
+    <div class="cyber-card-body">
+        <p>
+            Upload a CSV or Excel file containing student marks, attendance and
+            related features. The system will auto-detect the target column and
+            train regression models.
+        </p>
+
+        <form id="upload-form" class="cyber-form" enctype="multipart/form-data">
+            <div class="cyber-field">
+                <label class="cyber-label">Select file (.csv / .xlsx)</label>
+                <input class="cyber-input" type="file" name="file" id="file-input" accept=".csv,.xlsx,.xls" required>
+            </div>
+            <button class="cyber-btn mt-2" type="submit">Upload &amp; Train</button>
+        </form>
+
+        <div id="upload-result" class="mt-3" style="font-size: 13px;"></div>
+    </div>
+</section>
+
+<script>
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const box = document.getElementById('upload-result');
+    box.innerHTML = 'Training models... please wait.';
+    const formData = new FormData(e.target);
+    try {
+        const res = await fetch('{{ url_for("upload_dataset") }}', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (!data.success) {
+            box.innerHTML = '<div class="cyber-alert cyber-alert-error">' + (data.error || 'Error') + '</div>';
+            return;
+        }
+        let html = '<div class="cyber-alert cyber-alert-success">Dataset uploaded and models trained.</div>';
+        html += '<p>Target column: <strong>' + data.target + '</strong></p>';
+        html += '<p><strong>Model scores (R²):</strong></p><ul>';
+        for (const [m, s] of Object.entries(data.scores)) {
+            html += '<li>' + m + ': ' + (s * 100).toFixed(2) + '%</li>';
+        }
+        html += '</ul>';
+        box.innerHTML = html;
+    } catch (err) {
+        box.innerHTML = '<div class="cyber-alert cyber-alert-error">Upload failed.</div>';
+    }
+});
+</script>
+{% endblock %}
+
+
+

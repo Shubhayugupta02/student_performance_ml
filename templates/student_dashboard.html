@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">My Assignments</h1>
+        <span class="cyber-badge">Student view</span>
+    </div>
+    <div class="cyber-card-body">
+        {% if avg_percent %}
+            <p>Your average assignment score: <strong>{{ avg_percent }}%</strong></p>
+        {% else %}
+            <p>No graded assignments yet.</p>
+        {% endif %}
+
+        <table class="cyber-table mt-3">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Due</th>
+                <th>Submitted</th>
+                <th>Marks</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in items %}
+                <tr>
+                    <td>{{ row.assignment.id }}</td>
+                    <td>{{ row.assignment.title }}</td>
+                    <td>{{ row.assignment.due_date or '-' }}</td>
+                    <td>{{ 'Yes' if row.submitted else 'No' }}</td>
+                    <td>{{ row.marks }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+
+

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Submit Assignments – CyberML{% endblock %}
+
+{% block content %}
+<div class="cyber-grid grid-2">
+    <section class="cyber-card">
+        <div class="cyber-card-header">
+            <h1 class="cyber-card-title">Available Assignments</h1>
+        </div>
+        <div class="cyber-card-body">
+            <table class="cyber-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Teacher</th>
+                    <th>Due</th>
+                    <th>File</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for a in assignments %}
+                    <tr>
+                        <td>{{ a.id }}</td>
+                        <td>{{ a.title }}</td>
+                        <td>{{ a.created_by }}</td>
+                        <td>{{ a.due_date or '-' }}</td>
+                        <td>
+                            <a class="cyber-link" href="{{ url_for('download_assignment_file', filename=a.file) }}">
+                                Download
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="cyber-card">
+        <div class="cyber-card-header">
+            <h2 class="cyber-card-title">Upload Submission</h2>
+        </div>
+        <div class="cyber-card-body">
+            {% if error %}
+                <div class="cyber-alert cyber-alert-error">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+                <div class="cyber-alert cyber-alert-success">{{ success }}</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="cyber-form">
+                <div class="cyber-field">
+                    <label class="cyber-label">Assignment</label>
+                    <select name="assignment_id" class="cyber-select" required>
+                        <option value="">Select…</option>
+                        {% for a in assignments %}
+                            <option value="{{ a.id }}">
+                                #{{ a.id }} – {{ a.title }} ({{ a.created_by }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="cyber-field">
+                    <label class="cyber-label">Submission files</label>
+                    <input class="cyber-input" type="file" name="submission_files" multiple required>
+                </div>
+                <button class="cyber-btn mt-2" type="submit">Upload</button>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+
+

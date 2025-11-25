@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Grade Submission – CyberML{% endblock %}
+
+{% block content %}
+<section class="cyber-card" style="max-width: 520px; margin:0 auto;">
+    <div class="cyber-card-header">
+        <h1 class="cyber-card-title">Grade File</h1>
+        <span class="cyber-badge">{{ filename }}</span>
+    </div>
+    <div class="cyber-card-body">
+        <p>
+            <a class="cyber-link" href="{{ url_for('download_submission', filename=filename) }}">
+                Download submission
+            </a>
+        </p>
+
+        <form method="post" class="cyber-form">
+            <div class="cyber-field">
+                <label class="cyber-label">Marks</label>
+                <input class="cyber-input" type="number" name="marks" step="0.5" min="0"
+                       value="{{ grade.marks if grade else '' }}" required>
+            </div>
+            <div class="cyber-field">
+                <label class="cyber-label">Out of</label>
+                <input class="cyber-input" type="number" name="out_of" step="0.5" min="1"
+                       value="{{ grade.out_of if grade else 100 }}">
+            </div>
+            <div class="cyber-field">
+                <label class="cyber-label">Feedback</label>
+                <textarea class="cyber-textarea" name="feedback" rows="3">{{ grade.feedback if grade else '' }}</textarea>
+            </div>
+            <button class="cyber-btn mt-2" type="submit">Save grade</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+
+
+
+
